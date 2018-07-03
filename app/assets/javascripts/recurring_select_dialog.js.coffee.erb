@@ -83,9 +83,19 @@ window.RecurringSelectDialog =
         else if rule_type.search(/Yearly/) != -1
           @freq_select.prop('selectedIndex', 3)
           @initYearlyOptions()
+        else if rule_type.search(/Hourly/) != -1
+          @freq_select.prop('selectedIndex', 4)
+          @initHourlyOptions()
         else
           @initDailyOptions()
       @freq_select.on "change", @freqChanged
+
+    initHourlyOptions: ->
+      section = @content.find('.hourly_options')
+      interval_input = section.find('.rs_hourly_interval')
+      interval_input.val(@current_rule.hash.interval)
+      interval_input.on "change keyup", @intervalChanged
+      section.show()
 
     initDailyOptions: ->
       section = @content.find('.daily_options')
@@ -245,6 +255,10 @@ window.RecurringSelectDialog =
           @current_rule.hash.rule_type = "IceCube::YearlyRule"
           @current_rule.str = $.fn.recurring_select.texts["yearly"]
           @initYearlyOptions()
+        when "Hourly"
+          @current_rule.hash.rule_type = "IceCube::HourlyRule"
+          @current_rule.str = $.fn.recurring_select.texts["hourly"]
+          @initHourlyOptions()
         else
           @current_rule.hash.rule_type = "IceCube::DailyRule"
           @current_rule.str = $.fn.recurring_select.texts["daily"]
@@ -313,9 +327,17 @@ window.RecurringSelectDialog =
                 <option value='Weekly'>#{$.fn.recurring_select.texts["weekly"]}</option>
                 <option value='Monthly'>#{$.fn.recurring_select.texts["monthly"]}</option>
                 <option value='Yearly'>#{$.fn.recurring_select.texts["yearly"]}</option>
+                <option value='Hourly'>#{$.fn.recurring_select.texts["hourly"]}</option>
               </select>
             </p>
 
+            <div class='hourly_options freq_option_section'>
+              <p>
+                #{$.fn.recurring_select.texts["every"]}
+                <input type='text' data-wrapper-class='ui-recurring-select' name='rs_hourly_interval' class='rs_hourly_interval rs_interval' value='1' size='2' />
+                #{$.fn.recurring_select.texts["hourly"]}
+              </p>
+            </div>
             <div class='daily_options freq_option_section'>
               <p>
                 #{$.fn.recurring_select.texts["every"]}
